@@ -1,4 +1,4 @@
-#include "../../includes/blocks.h"
+#include "blocks.h"
 
 t_list *block(float x, float y, SDL_Renderer *renderer)
 {

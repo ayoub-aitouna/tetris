@@ -1,4 +1,4 @@
-#include "../../includes/blocks.h"
+#include "blocks.h"
 
 possition_t *get_possition(float x, float y)
 {

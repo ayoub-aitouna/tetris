@@ -1,9 +1,12 @@
 {
     "files.associations": {
+        "*.h": "c",
+        "*.c": "c",
         "tetris.h": "c",
         "sdl_timer.h": "c",
         "types.h": "c",
         "blocks.h": "c",
-        "tetris": "c"
+        "tetris": "c",
+        "ratio": "c"
     }
 }

@@ -10,7 +10,9 @@ void clear(SDL_Renderer *renderer)
 void print_list(t_list *list)
 {
 	possition_t *pos;
-	float H_BZ = BLOCK_SIZE / 2;
+	float H_BZ;
+
+	H_BZ = BLOCK_SIZE / 2;
 	printf("\n\n start_list\n");
 	while (list)
 	{
@@ -20,28 +22,13 @@ void print_list(t_list *list)
 	}
 	printf("\nend_list\n");
 }
-float get_start(int p_num)
-{
-	if (p_num == 0)
-		return (2 * BLOCK_SIZE);
-	if (p_num == 6)
-		return (BLOCK_SIZE);
-	return (BLOCK_SIZE + (BLOCK_SIZE / 2));
-}
-float get_end(int p_num)
-{
-	if (p_num == 0)
-		return (2 * BLOCK_SIZE);
-	if (p_num == 2)
-		return (BLOCK_SIZE / 2);
-	if (p_num == 6)
-		return (BLOCK_SIZE);
-	return (BLOCK_SIZE + (BLOCK_SIZE / 2));
-}
+
 int collision(t_list *list)
 {
 	possition_t *pos;
-	float H_BZ = BLOCK_SIZE / 2;
+	float H_BZ;
+
+	H_BZ = BLOCK_SIZE / 2;
 	while (list)
 	{
 		pos = (possition_t *)list->content;
@@ -54,26 +41,31 @@ int collision(t_list *list)
 	return (0);
 }
 
-int main(void)
+int main(int ac, char **av)
 {
 	SDL_Window *window;
 	SDL_Renderer *renderer;
 	SDL_Event event;
 	t_list *list;
-	srand(time(NULL));
-	Peice peices[7] = {Line_peice, Revers_L_peice, L_peice, Z_peice, T_peice, Revers_Z_peice, Cube};
-	int random_num = 1;
-	int x_p = WIDTH / 2;
-	float y_p = 0;
-
+	int random_num;
+	int x_p;
+	float y_p;
+	char **board = init_board();
+	Peice peices[7] = {Line_peice, Revers_L_peice, L_peice, Z_peice, T_peice,
+					   Revers_Z_peice, Cube};
+	random_num = ac == 2 ? atoi(av[1]) : 0;
+	x_p = BLOCK_SIZE * 6;
+	y_p = 200;
 	SDL_Init(SDL_INIT_EVERYTHING);
-	window = SDL_CreateWindow("draw_line", SDL_WINDOWPOS_CENTERED,
+	window = SDL_CreateWindow("TETRIS", SDL_WINDOWPOS_CENTERED,
 							  SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, 0);
 	renderer = SDL_CreateRenderer(window, -1, 0);
-
+	int is_collision = 0;
 	while (1)
 	{
+		is_collision = 0;
 		clear(renderer);
+		display_board(board, renderer);
 		list = peices[random_num](x_p, y_p, renderer);
 		SDL_RenderPresent(renderer);
 		while (SDL_PollEvent(&event))
@@ -84,15 +76,22 @@ int main(void)
 			{
 				if (event.key.keysym.scancode == SDL_SCANCODE_LEFT)
 					x_p = collision(peices[random_num](x_p - BLOCK_SIZE, y_p, renderer)) != 1
-					? x_p - BLOCK_SIZE
-					: get_start(random_num);
+							  ? x_p - BLOCK_SIZE
+							  : get_start(random_num);
 				if (event.key.keysym.scancode == SDL_SCANCODE_RIGHT)
 					x_p = collision(peices[random_num](x_p + BLOCK_SIZE, y_p, renderer)) != 2
-					? x_p + BLOCK_SIZE
-					: WIDTH - get_end(random_num);
+							  ? x_p + BLOCK_SIZE
+							  : WIDTH - get_end(random_num);
 			}
 		}
+		board = check_collision(list, board, x_p, y_p, &is_collision);
+		if (is_collision)
+		{
+			y_p = 0;
+			random_num = random_num < 6 ? random_num + 1 : 0;
+		}
+		else
+			y_p = y_p >= HEIGHT ? 0 : y_p + 1;
 		SDL_Delay(1000 / FRAME_RATE);
-		y_p = y_p >= HEIGHT ? 0 : y_p + 1;
 	}
 }

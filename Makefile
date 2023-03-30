@@ -10,20 +10,20 @@ THIRD_PARTHY_FILES := $(wildcard $(THIRD_PARTHY_DIR)/*.c)
 
 # Compiler and flags
 CC		:= gcc
-LIB		:= -I/Users/aaitouna/homebrew/opt/sdl2/include -L/Users/aaitouna/homebrew/opt/sdl2/lib -lSDL2 -pthread -lm
+LIB		:= `sdl2-config --cflags --libs` -lSDL2 -pthread -lm
 CFLAGS	:=  -Wall -Werror -Wextra 
 # Targets
 all: ${NAME}
 
 ${NAME} : $(OBJ_FILES)
-	$(CC) ${LIB}  $(CFLAGS) $^ $(THIRD_PARTHY_FILES) -o $@
+	$(CC)  $(CFLAGS) $^ $(THIRD_PARTHY_FILES) -o $@  ${LIB}
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
 	$(CC) ${LIB}  -c $< -o $@
 
 clean:
-	rm -rf $(OBJ_DIR)/*.o
+	rm -rf ${OBJ_FILES}
 
 fclean: clean
 	rm -rf ${NAME}

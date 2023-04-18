@@ -12,6 +12,7 @@ THIRD_PARTHY_FILES := $(wildcard $(THIRD_PARTHY_DIR)/*.c)
 CC		:= gcc
 LIB		:= `sdl2-config --cflags --libs` -lSDL2 -pthread -lm
 CFLAGS	:=  -Wall -Werror -Wextra 
+
 # Targets
 all: ${NAME}
 
@@ -24,7 +25,8 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 
 clean:
 	rm -rf ${OBJ_FILES}
-
+
 fclean: clean
 	rm -rf ${NAME}
+
 re: fclean ${NAME}
